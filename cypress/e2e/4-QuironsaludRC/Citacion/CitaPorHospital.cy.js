@@ -29,6 +29,6 @@ describe('Tests Cita Por Hospital', () => {
         cy.get('.appointmentWay-block button.link-block').should('be.visible').click()
         cy.get('.button-list button.appt-optionButton').first().click();
         //Esto deberia ir en un page object de cita por hospital
-        //seguir aqui con el formulario de citacion
+        //seguir aqui con el formulario de citacion. Prueba Git
     })
 });
