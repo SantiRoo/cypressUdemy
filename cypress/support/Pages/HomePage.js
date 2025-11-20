@@ -1,6 +1,6 @@
 class HomePage{
     //Selectors. Como se ve los punto y coma van dentro de las llaves para los selectors
-    get cierreModalConfiarBtn() {return '.appt-link.btn-link';}
+    get cierreModalConfiarBtn() {return 'button.cancelButton.appt-button.secondary.no-hover';}
     get quieroPedirCitaBtn() {return '.home-tarjeta-saludo-botones__destacado.btnIcon__red';}
 
     cerrarModalConfiar(){
