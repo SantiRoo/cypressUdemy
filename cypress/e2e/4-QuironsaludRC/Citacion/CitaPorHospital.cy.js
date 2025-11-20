@@ -2,6 +2,7 @@ import LoginPage from "../../../support/Pages/LoginPage";
 import HomePage from "../../../support/Pages/HomePage";
 import CmiOCitaPage from "../../../support/Pages/Citacion/CmiOCitaPage";
 import CaminoCitaPage from "../../../support/Pages/Citacion/CaminoCitaPage";
+import FormularioCitacionPage from "../../../support/Pages/Citacion/FormularioCitacionPage";
 
 const loginPaciente = () => {
     LoginPage.visit();
@@ -37,17 +38,23 @@ describe('Tests Cita Por Hospital', () => {
         //cy.get('.button-list button.appt-optionButton').first().click();
         //Esto deberia ir en un page object de cita por hospital
         //seguir aqui con el formulario de citacion. Prueba Git
-        cy.get('input[value="Buscar una provincia"').click()
+        FormularioCitacionPage.accederProvincias();
+        //cy.get('input[value="Buscar una provincia"').click()
         cy.get('.appt-optionButton-label').contains('Córdoba').click();
-        cy.get('input[value="Selecciona un Hospital o centro"').click();
+        FormularioCitacionPage.accederHospitales();
+        //cy.get('input[value="Selecciona un Hospital o centro"').click();
         cy.get('.select-all-button').click();
-        cy.get('input[value="Selecciona una especialidad"').click()
+        FormularioCitacionPage.accederEspecialidades();
+        //cy.get('input[value="Selecciona una especialidad"').click()
         cy.get('.estilizado').contains('Cardiología').click();
-        cy.get('input[value="Selecciona el motivo"').click();
+        FormularioCitacionPage.accederMotivos()
+        //cy.get('input[value="Selecciona el motivo"').click();
         cy.get('.appt-optionButton').contains('Consulta con un médico').click();
-        cy.get('input[value="Cualquier profesional"').should('be.visible').click();
+        FormularioCitacionPage.accederProfesionales();
+        //cy.get('input[value="Cualquier profesional"').should('be.visible').click();
         cy.get('.professional-btn').contains('Juan Carlos Ca Mi').click()
-        cy.get('.appt-button').contains('Siguiente').click()
+        FormularioCitacionPage.confirmarFormulario();
+        //cy.get('.appt-button').contains('Siguiente').click()
         cy.get('.appt-button.btn-yes').click();
         cy.get('.appt-optionButton-label').contains('Consulta Primera').should('be.visible').click();
         cy.get('.appt-optionButton-label').contains('Presencial').click();
