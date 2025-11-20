@@ -1,7 +1,7 @@
 import LoginPage from "../../../support/Pages/LoginPage";
 import HomePage from "../../../support/Pages/HomePage";
 import CmiOCitaPage from "../../../support/Pages/Citacion/CmiOCitaPage";
-import CaminoCita from "../../../support/Pages/Citacion/CaminoCita";
+import CaminoCitaPage from "../../../support/Pages/Citacion/CaminoCitaPage";
 
 const loginPaciente = () => {
     LoginPage.visit();
@@ -33,7 +33,7 @@ describe('Tests Cita Por Hospital', () => {
         HomePage.accederACitacion();
         //Esto deberia ir en un page objet de citación
         CmiOCitaPage.accederCitaProgramada();
-        CaminoCita.accederCitaPorHospital();
+        CaminoCitaPage.accederCitaPorHospital();
         //cy.get('.button-list button.appt-optionButton').first().click();
         //Esto deberia ir en un page object de cita por hospital
         //seguir aqui con el formulario de citacion. Prueba Git
