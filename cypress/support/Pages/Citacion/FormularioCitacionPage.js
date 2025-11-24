@@ -25,3 +25,5 @@ class FormularioCitacionPage{
         this.siguienteBtn.click();
     }
 }
+
+export default new FormularioCitacionPage();
