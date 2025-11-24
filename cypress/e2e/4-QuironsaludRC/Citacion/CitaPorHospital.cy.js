@@ -5,6 +5,10 @@ import CaminoCitaPage from "../../../support/Pages/Citacion/CaminoCitaPage";
 import FormularioCitacionPage from "../../../support/Pages/Citacion/FormularioCitacionPage";
 import FormularioCitacionProvinciasPage from "../../../support/Pages/Citacion/FormularioCitacionProvinciasPage";
 import FromularioCitacionCentrosPage from "../../../support/Pages/Citacion/FromularioCitacionCentrosPage";
+import FormularioCitacionEspecialidadesPage from "../../../support/Pages/Citacion/FormularioCitacionEspecialidadesPage";
+import FormularioCitacionMotivosPage from "../../../support/Pages/Citacion/FormularioCitacionMotivosPage";
+import FormularioCitacionProfesionalesPage from "../../../support/Pages/Citacion/FormularioCitacionProfesionalesPage";
+import PrimeraOSucesivaPage from "../../../support/Pages/Citacion/PrimeraOSucesivaPage";
 
 const loginPaciente = () => {
     LoginPage.visit();
@@ -37,15 +41,14 @@ describe('Tests Cita Por Hospital', () => {
         FormularioCitacionProvinciasPage.seleccionarProvincia('Córdoba')
         FormularioCitacionPage.accederHospitales();
         FromularioCitacionCentrosPage.seleccionarTodosLosCentros();
-        //cy.get('.select-all-button').click();
         FormularioCitacionPage.accederEspecialidades();
-        cy.get('.estilizado').contains('Cardiología').click();
-        FormularioCitacionPage.accederMotivos()
-        cy.get('.appt-optionButton').contains('Consulta con un médico').click();
+        FormularioCitacionEspecialidadesPage.seleccionarEspecialidad('Cardiología');
+        FormularioCitacionPage.accederMotivos();
+        FormularioCitacionMotivosPage.seleccionarConsultaConMedico();
         FormularioCitacionPage.accederProfesionales();
-        cy.get('.professional-btn').contains('Juan Carlos Ca Mi').click()
+        FormularioCitacionProfesionalesPage.seleccionarProfesional('Juan Carlos Ca Mi')
         FormularioCitacionPage.confirmarFormulario();
-        cy.get('.appt-button.btn-yes').click();
+        PrimeraOSucesivaPage.seleccionarPrimeraCita();
         cy.get('.appt-optionButton-label').contains('Consulta Primera').should('be.visible').click();
         cy.get('.appt-optionButton-label').contains('Presencial').click();
         cy.get('.appt-button').contains('Siguiente').click()

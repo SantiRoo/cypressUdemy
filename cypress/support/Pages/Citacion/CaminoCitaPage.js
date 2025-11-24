@@ -1,4 +1,4 @@
-class CaminoCita{
+class CaminoCitaPage{
     get porHospital(){return cy.get('.button-list button.appt-optionButton').eq(0);}
     get porEspecialidad(){return cy.get('.button-list button.appt-optionButton').eq(1);}
     get porProfesional(){return cy.get('.button-list button.appt-optionButton').eq(2);}
@@ -14,4 +14,4 @@ class CaminoCita{
     }
 }
 
-export default new CaminoCita();
+export default new CaminoCitaPage();
