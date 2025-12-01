@@ -9,6 +9,7 @@ import FormularioCitacionEspecialidadesPage from "../../../support/Pages/Citacio
 import FormularioCitacionMotivosPage from "../../../support/Pages/Citacion/FormularioCitacionMotivosPage";
 import FormularioCitacionProfesionalesPage from "../../../support/Pages/Citacion/FormularioCitacionProfesionalesPage";
 import PrimeraOSucesivaPage from "../../../support/Pages/Citacion/PrimeraOSucesivaPage";
+import TipoCitaPage from "../../../support/Pages/Citacion/TipoCitaPage";
 
 const loginPaciente = () => {
     LoginPage.visit();
@@ -49,9 +50,10 @@ describe('Tests Cita Por Hospital', () => {
         FormularioCitacionProfesionalesPage.seleccionarProfesional('Juan Carlos Ca Mi')
         FormularioCitacionPage.confirmarFormulario();
         PrimeraOSucesivaPage.seleccionarPrimeraCita();
-        cy.get('.appt-optionButton-label').contains('Consulta Primera').should('be.visible').click();
-        cy.get('.appt-optionButton-label').contains('Presencial').click();
-        cy.get('.appt-button').contains('Siguiente').click()
+        TipoCitaPage.seleccionarConsultaPresencial();
+        //cy.get('.appt-optionButton-label').contains('Presencial').click();
+        TipoCitaPage.clickEnSiguiente();
+        //cy.get('.appt-button').contains('Siguiente').click()
         cy.get('.appt-optionButton-label').contains('Cita privada o seguro con reembolso').click();
         cy.get('.slider.round').click();
         cy.get('.appt-button').contains('Ver fechas').click();
