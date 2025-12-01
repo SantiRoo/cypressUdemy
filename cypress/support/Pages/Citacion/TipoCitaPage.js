@@ -5,19 +5,19 @@ class TipoCitaPage{
     get siguienteBtn(){return cy.get('.appt-button').contains('Siguiente')};
 
     seleccionarConsultaPresencial(){
-        this.presencialBtn().click();
+        this.presencialBtn.click();
     }
     
     seleccionarConsultaTelefonica(){
-        this.telefonicaBtn().click();
+        this.telefonicaBtn.click();
     }
     
     seleccionarConsultaVideollamada(){
-        this.videollamadaBtn().click();
+        this.videollamadaBtn.click();
     }
 
     clickEnSiguiente(){
-        this.siguienteBtn().click();
+        this.siguienteBtn.click();
     }
 }
 
