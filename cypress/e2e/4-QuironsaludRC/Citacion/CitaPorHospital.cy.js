@@ -57,7 +57,15 @@ describe('Tests Cita Por Hospital', () => {
         TipoCitaPage.clickEnSiguiente();
         PrivadaOAseguradora.seleccionarCitaPrivada();
         PrivadaOAseguradora.aceptarAbonarImporte();
+        cy.intercept('POST', '/idcsalud-client/cm/portal-paciente/pdp-api/v1/citas/huecos').as('llamadaHuecos');
         PrivadaOAseguradora.clickVerFechas();
+        cy.wait('@llamadaHuecos')
+        cy.get('.isFirstGap').click()
+        cy.get('.gaps .gap-button').first().click();
+        cy.intercept('POST', '/idcsalud-client/cm/portal-paciente/pdp-api/v1/appointment/new').as('creacionCita')
+        cy.get('.appt-button').contains('Confirmar cita').click();
+        cy.wait('@creacionCita');
+        cy.get('.appointmentConfirmSummary').should('be.visible');
     })
 
     after(() =>{
