@@ -12,6 +12,8 @@ import PrimeraOSucesivaPage from "../../../support/Pages/Citacion/PrimeraOSucesi
 import PrestacionesPage from "../../../support/Pages/Citacion/PrestacionesPage";
 import TipoCitaPage from "../../../support/Pages/Citacion/TipoCitaPage";
 import PrivadaOAseguradora from "../../../support/Pages/Citacion/PrivadaOAseguradora";
+import HuecosConHuecosPage from "../../../support/Pages/Citacion/HuecosConHuecosPage";
+import HuecosPage from "../../../support/Pages/Citacion/HuecosPage";
 
 const loginPaciente = () => {
     LoginPage.visit();
@@ -29,7 +31,7 @@ describe('Tests Cita Por Hospital', () => {
         cy.session('paciente logueado', loginPaciente)
     })
 
-    it('Cita por hospital por centro especifico',() => {
+    it('Cita por hospital - Multicentro - Cita Privada',() => {
         cy.visit('https://rc.quironsalud.com/idcsalud-client/cm/portal-paciente/tkMain')
         cy.get('.listadoPatient li')
         .first()
@@ -48,8 +50,8 @@ describe('Tests Cita Por Hospital', () => {
         FormularioCitacionEspecialidadesPage.seleccionarEspecialidad('Cardiología');
         FormularioCitacionPage.accederMotivos();
         FormularioCitacionMotivosPage.seleccionarConsultaConMedico();
-        FormularioCitacionPage.accederProfesionales();
-        FormularioCitacionProfesionalesPage.seleccionarProfesional('Juan Carlos Ca Mi')
+        //FormularioCitacionPage.accederProfesionales();
+        //FormularioCitacionProfesionalesPage.seleccionarProfesional('Juan Carlos Ca Mi')
         FormularioCitacionPage.confirmarFormulario();
         PrimeraOSucesivaPage.seleccionarPrimeraCita();
         PrestacionesPage.seleccionarPrestacion('Consulta Primera')
@@ -59,6 +61,7 @@ describe('Tests Cita Por Hospital', () => {
         PrivadaOAseguradora.aceptarAbonarImporte();
         cy.intercept('POST', '/idcsalud-client/cm/portal-paciente/pdp-api/v1/citas/huecos').as('llamadaHuecos');
         PrivadaOAseguradora.clickVerFechas();
+        //HuecosConHuecosPage.seleccionarYConfirmarHueco('@llamadaHuecos') Seguir trabajando en migrar el PO a Huecos
         cy.wait('@llamadaHuecos')
         cy.get('.isFirstGap').click()
         cy.get('.gaps .gap-button').first().click();
@@ -66,6 +69,8 @@ describe('Tests Cita Por Hospital', () => {
         cy.get('.appt-button').contains('Confirmar cita').click();
         cy.wait('@creacionCita');
         cy.get('.appointmentConfirmSummary').should('be.visible');
+        HuecosPage.irAMisCitas();
+        //Queda comparar datos de cita creada con los datos de la cita en mis citas
     })
 
     after(() =>{
