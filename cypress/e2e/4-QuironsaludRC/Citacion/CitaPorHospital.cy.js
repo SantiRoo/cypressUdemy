@@ -62,19 +62,19 @@ describe('Tests Cita Por Hospital', () => {
         PrivadaOAseguradora.aceptarAbonarImporte();
         cy.intercept('POST', '/idcsalud-client/cm/portal-paciente/pdp-api/v1/citas/huecos').as('llamadaHuecos');
         PrivadaOAseguradora.clickVerFechas();
-        //HuecosConHuecosPage.seleccionarYConfirmarHueco('@llamadaHuecos') Seguir trabajando en migrar el PO a Huecos
-        cy.wait('@llamadaHuecos')
-        cy.get('.isFirstGap').click()
-        cy.get('.gaps .gap-button').first().click();
-        cy.intercept('POST', '/idcsalud-client/cm/portal-paciente/pdp-api/v1/appointment/new').as('creacionCita')
-        cy.get('.appt-button').contains('Confirmar cita').click();
-        cy.wait('@creacionCita');
-        cy.get('.appointmentConfirmSummary').should('be.visible');
+        HuecosConHuecosPage.seleccionarYConfirmarHueco('@llamadaHuecos') //Seguir trabajando en migrar el PO a Huecos
+        //cy.wait('@llamadaHuecos')
+        //cy.get('.isFirstGap').click()
+        //cy.get('.gaps .gap-button').first().click();
+        //cy.intercept('POST', '/idcsalud-client/cm/portal-paciente/pdp-api/v1/appointment/new').as('creacionCita')
+        //cy.get('.appt-button').contains('Confirmar cita').click();
+        //cy.wait('@creacionCita');
+        //cy.get('.appointmentConfirmSummary').should('be.visible');
         let fechaCitaCreada;
-        HuecosPage.getFechaYHoraCitaCreada().invoke('text').then(fechaEnHuecos => {
+        HuecosConHuecosPage.getFechaYHoraCitaCreada().invoke('text').then(fechaEnHuecos => {
             fechaCitaCreada = fechaEnHuecos.trim();
         })
-        HuecosPage.irAMisCitas();
+        HuecosConHuecosPage.irAMisCitas();
         MisCitas.getFechaCita().invoke('text').then(fechaEnCita => {
             expect(fechaEnCita.trim()).to.eq(fechaCitaCreada)
         })
