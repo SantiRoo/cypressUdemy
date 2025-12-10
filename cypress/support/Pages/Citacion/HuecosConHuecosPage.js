@@ -1,4 +1,6 @@
-class HuecosConHuecosPage{
+import HuecosPage from "./HuecosPage";
+
+class HuecosConHuecosPage extends HuecosPage{
 
     //Le pasamos el alias de llamada a huecos para que espere a que termine dicha llamada
     seleccionarYConfirmarHueco(llamadaHuecos){

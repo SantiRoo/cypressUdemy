@@ -32,7 +32,8 @@ describe('Tests Cita Por Hospital', () => {
         cy.session('paciente logueado', loginPaciente)
     })
 
-    it('Cita por hospital - Multicentro - Cita Privada',() => {
+    it('Cita por hospital - Multicentro (Provincia) - Cita Privada',() => {
+        //Esto hay que moverlo al before de arriba
         cy.visit('https://rc.quironsalud.com/idcsalud-client/cm/portal-paciente/tkMain')
         cy.get('.listadoPatient li')
         .first()
@@ -82,6 +83,28 @@ describe('Tests Cita Por Hospital', () => {
 
     })
 
+    it('Cita por hospital - Centro específico - Cita Privada - Presencial',() =>{
+        CmiOCitaPage.visit();
+        CmiOCitaPage.accederCitaProgramada();
+        CaminoCitaPage.accederCitaPorHospital();
+        FormularioCitacionPage.accederProvincias();
+        FormularioCitacionProvinciasPage.seleccionarProvincia('A Coruña');
+        FormularioCitacionPage.accederHospitales;
+        FromularioCitacionCentrosPage.expandirCentros();
+        FromularioCitacionCentrosPage.seleccionarCentro('Centro Médico Quirónsalud A Coruña (Riazor)')
+    })
+
+    it('Cita por hospital - Centro específico - Cita Privada - Telefónica', () => {
+
+    })
+
+    it('Cita por hospital - Centro específico - Cita Privada - Videoconsulta', () => {
+
+    })
+
+    it('Cita por hospital - Centro específico - Cita Privada - Videoconsulta', () => {
+
+    })    
     after(() =>{
         Cypress.session.clearAllSavedSessions();
     })
