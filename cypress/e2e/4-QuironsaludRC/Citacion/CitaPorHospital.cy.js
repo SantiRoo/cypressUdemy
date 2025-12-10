@@ -14,6 +14,7 @@ import TipoCitaPage from "../../../support/Pages/Citacion/TipoCitaPage";
 import PrivadaOAseguradora from "../../../support/Pages/Citacion/PrivadaOAseguradora";
 import HuecosConHuecosPage from "../../../support/Pages/Citacion/HuecosConHuecosPage";
 import HuecosPage from "../../../support/Pages/Citacion/HuecosPage";
+import MisCitas from "../../../support/Pages/MisCitas";
 
 const loginPaciente = () => {
     LoginPage.visit();
@@ -69,8 +70,16 @@ describe('Tests Cita Por Hospital', () => {
         cy.get('.appt-button').contains('Confirmar cita').click();
         cy.wait('@creacionCita');
         cy.get('.appointmentConfirmSummary').should('be.visible');
+        let fechaCitaCreada;
+        HuecosPage.getFechaYHoraCitaCreada().invoke('text').then(fechaEnHuecos => {
+            fechaCitaCreada = fechaEnHuecos.trim();
+        })
         HuecosPage.irAMisCitas();
+        MisCitas.getFechaCita().invoke('text').then(fechaEnCita => {
+            expect(fechaEnCita.trim()).to.eq(fechaCitaCreada)
+        })
         //Queda comparar datos de cita creada con los datos de la cita en mis citas
+
     })
 
     after(() =>{
