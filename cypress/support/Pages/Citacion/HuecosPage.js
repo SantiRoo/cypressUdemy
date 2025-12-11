@@ -1,4 +1,4 @@
-class HuecosPage{
+export default class HuecosPage{
     
     //Cita creada con éxito modal
     get irAMisCitasBtn(){return cy.get('.appt-button').contains('Ir a Mis citas');}
@@ -15,4 +15,4 @@ class HuecosPage{
     }
 }
 
-export default new HuecosPage;
+//export default new HuecosPage;

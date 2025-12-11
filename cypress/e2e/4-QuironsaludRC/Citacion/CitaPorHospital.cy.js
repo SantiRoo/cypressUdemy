@@ -28,7 +28,7 @@ const loginPaciente = () => {
 }
 
 describe('Tests Cita Por Hospital', () => {
-    before(()=>{
+    beforeEach(()=>{
         cy.session('paciente logueado', loginPaciente)
     })
 
@@ -85,11 +85,12 @@ describe('Tests Cita Por Hospital', () => {
 
     it('Cita por hospital - Centro específico - Cita Privada - Presencial',() =>{
         CmiOCitaPage.visit();
+        HomePage.cerrarModalConfiar();
         CmiOCitaPage.accederCitaProgramada();
         CaminoCitaPage.accederCitaPorHospital();
         FormularioCitacionPage.accederProvincias();
         FormularioCitacionProvinciasPage.seleccionarProvincia('A Coruña');
-        FormularioCitacionPage.accederHospitales;
+        FormularioCitacionPage.accederHospitales();
         FromularioCitacionCentrosPage.expandirCentros();
         FromularioCitacionCentrosPage.seleccionarCentro('Centro Médico Quirónsalud A Coruña (Riazor)')
     })
