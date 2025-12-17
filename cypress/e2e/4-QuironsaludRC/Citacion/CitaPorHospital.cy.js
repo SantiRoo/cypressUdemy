@@ -1,4 +1,5 @@
 import LoginPage from "../../../support/Pages/LoginPage";
+import SeleccionDePacientesPage from "../../../support/Pages/SeleccionDePacientesPage";
 import HomePage from "../../../support/Pages/HomePage";
 import CmiOCitaPage from "../../../support/Pages/Citacion/CmiOCitaPage";
 import CaminoCitaPage from "../../../support/Pages/Citacion/CaminoCitaPage";
@@ -19,7 +20,7 @@ import MisCitas from "../../../support/Pages/MisCitas";
 const loginPaciente = () => {
     LoginPage.visit();
     cy.wait(5000)
-    LoginPage.acceptCookies();
+    //LoginPage.acceptCookies();
     const email = 'santi@rc.es'
     const password = 'Tester01'
     LoginPage.fillLoginForm(email, password);
@@ -29,17 +30,16 @@ const loginPaciente = () => {
 
 describe('Tests Cita Por Hospital', () => {
     beforeEach(()=>{
-        cy.session('paciente logueado', loginPaciente)
+        cy.session('paciente logueado', loginPaciente);
+        cy.visit('https://rc.quironsalud.com/idcsalud-client/cm/portal-paciente/tkMain');
+    })
+
+    afterEach(() =>{
+        Cypress.session.clearAllSavedSessions();
     })
 
     it('Cita por hospital - Multicentro (Provincia) - Cita Privada',() => {
-        //Esto hay que moverlo al before de arriba
-        cy.visit('https://rc.quironsalud.com/idcsalud-client/cm/portal-paciente/tkMain')
-        cy.get('.listadoPatient li')
-        .first()
-        .click();
-        cy.get('#buttonContinuar').click();
-        //Vamos derecho a la cita para saltearnos la pantalla de destacados
+        SeleccionDePacientesPage.seleccionarPacienteTitular();
         CmiOCitaPage.visit()
         HomePage.cerrarModalConfiar();
         CmiOCitaPage.accederCitaProgramada();
@@ -61,29 +61,49 @@ describe('Tests Cita Por Hospital', () => {
         TipoCitaPage.clickEnSiguiente();
         PrivadaOAseguradora.seleccionarCitaPrivada();
         PrivadaOAseguradora.aceptarAbonarImporte();
+        cy.intercept('POST', '/idcsalud-client/cm/portal-paciente/pdp-api/v1/appointment/peticion/pending').as('llamadaPending');
         cy.intercept('POST', '/idcsalud-client/cm/portal-paciente/pdp-api/v1/citas/huecos').as('llamadaHuecos');
         PrivadaOAseguradora.clickVerFechas();
-        HuecosConHuecosPage.seleccionarYConfirmarHueco('@llamadaHuecos') //Seguir trabajando en migrar el PO a Huecos
-        //cy.wait('@llamadaHuecos')
-        //cy.get('.isFirstGap').click()
-        //cy.get('.gaps .gap-button').first().click();
-        //cy.intercept('POST', '/idcsalud-client/cm/portal-paciente/pdp-api/v1/appointment/new').as('creacionCita')
-        //cy.get('.appt-button').contains('Confirmar cita').click();
-        //cy.wait('@creacionCita');
-        //cy.get('.appointmentConfirmSummary').should('be.visible');
+        //Le pasamos las intercepciones de arriba, y se manejan los waits dentro de huecos
+        HuecosConHuecosPage.seleccionarYConfirmarHueco('@llamadaPending','@llamadaHuecos');
+
+
+        //Me guardo todos los datos de la cita creada
         let fechaCitaCreada;
+        let hospitalCitaCreada;
         HuecosConHuecosPage.getFechaYHoraCitaCreada().invoke('text').then(fechaEnHuecos => {
             fechaCitaCreada = fechaEnHuecos.trim();
         })
-        HuecosConHuecosPage.irAMisCitas();
-        MisCitas.getFechaCita().invoke('text').then(fechaEnCita => {
-            expect(fechaEnCita.trim()).to.eq(fechaCitaCreada)
+        HuecosConHuecosPage.getHospitalCitaCreada().invoke('text').then(hospitalEnHuecos => {
+            hospitalCitaCreada = hospitalEnHuecos.trim();
         })
-        //Queda comparar datos de cita creada con los datos de la cita en mis citas
+        //Voy a "Mis citas"
+        cy.intercept('POST', '/idcsalud-client/cm/portal-paciente/pdp-api/v1/citas/all').as('llamadaCitasAll');
+        HuecosConHuecosPage.irAMisCitas();
+        cy.wait('@llamadaCitasAll')
+
+        //Comparo los datos de la modal de cita confirmada con los datos en "Mis citas"
+        MisCitas.getFechaCita().invoke('text').then(fechaEnMisCitas => {
+            expect(fechaEnMisCitas.trim()).to.eq(fechaCitaCreada)
+        })
+        MisCitas.getCentro().invoke('text').then(hospitalEnMisCitas => {
+            expect(hospitalEnMisCitas.trim()).to.eq(hospitalCitaCreada)
+        })
+        cy.intercept('POST', '/idcsalud-client/cm/portal-paciente/pdp-api/v1/cancel/appointment?isNotificationAppointment=false').as('llamadaAnulacion')
+        MisCitas.anularCita();
+        cy.wait('@llamadaAnulacion').then((interception) => {
+            expect(interception.response.statusCode).to.eq(200);
+        })
+        
 
     })
 
     it('Cita por hospital - Centro específico - Cita Privada - Presencial',() =>{
+        cy.visit('https://rc.quironsalud.com/idcsalud-client/cm/portal-paciente/tkMain')
+        cy.get('.listadoPatient li')
+        .first()
+        .click();
+        cy.get('#buttonContinuar').click();
         CmiOCitaPage.visit();
         HomePage.cerrarModalConfiar();
         CmiOCitaPage.accederCitaProgramada();
@@ -106,7 +126,5 @@ describe('Tests Cita Por Hospital', () => {
     it('Cita por hospital - Centro específico - Cita Privada - Videoconsulta', () => {
 
     })    
-    after(() =>{
-        Cypress.session.clearAllSavedSessions();
-    })
+
 });

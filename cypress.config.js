@@ -7,6 +7,10 @@ module.exports = defineConfig({
   defaultCommandTimeout: 10000,
   responseTimeout: 60000,
   requestTimeout: 60000,
+  blockHosts: [
+      "*google-analytics.com",
+      "*googletagmanager.com",
+    ],
   e2e: {
     setupNodeEvents(on, config) {
       // implement node event listeners here
