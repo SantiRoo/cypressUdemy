@@ -45,7 +45,7 @@ describe('Tests Cita Por Hospital', () => {
         CmiOCitaPage.accederCitaProgramada();
         CaminoCitaPage.accederCitaPorHospital();
         FormularioCitacionPage.accederProvincias();
-        FormularioCitacionProvinciasPage.seleccionarProvincia('Córdoba')
+        FormularioCitacionProvinciasPage.seleccionarProvincia('A Coruña')
         FormularioCitacionPage.accederHospitales();
         FromularioCitacionCentrosPage.seleccionarTodosLosCentros();
         FormularioCitacionPage.accederEspecialidades();
@@ -66,8 +66,6 @@ describe('Tests Cita Por Hospital', () => {
         PrivadaOAseguradora.clickVerFechas();
         //Le pasamos las intercepciones de arriba, y se manejan los waits dentro de huecos
         HuecosConHuecosPage.seleccionarYConfirmarHueco('@llamadaPending','@llamadaHuecos');
-
-
         //Me guardo todos los datos de la cita creada
         let fechaCitaCreada;
         let hospitalCitaCreada;

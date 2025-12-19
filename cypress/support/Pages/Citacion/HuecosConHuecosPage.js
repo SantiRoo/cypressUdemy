@@ -17,13 +17,22 @@ class HuecosConHuecosPage extends HuecosPage{
     //Le pasamos el alias de llamada a huecos para que espere a que termine dicha llamada
     seleccionarYConfirmarHueco(llamadaPending, llamadaHuecos){
         cy.wait(llamadaPending);
-        cy.wait(llamadaHuecos);
-        cy.get('.isFirstGap').click();
-        cy.get('.gaps .gap-button').first().click();
+        cy.wait(llamadaHuecos).then((interception) => {
+            const fechaHueco = interception.response.body[1].fechaCitaStr;
+            const horaHueco = interception.response.body[1].horaCitaStr;
+            const centroHueco = interception.response.body[1].idCentro;
+            const idHueco = `[id="table_calendar_hour_${fechaHueco}_${horaHueco}_${centroHueco}"]`;
+            cy.get(idHueco).click();
+        });
+       //cy.get('.isFirstGap').click();
+       //cy.get('.gaps .gap-button').first().click();
         cy.intercept('POST', '/idcsalud-client/cm/portal-paciente/pdp-api/v1/appointment/new').as('creacionCita')
         cy.get('.appt-button').contains('Confirmar cita').click();
-        cy.wait('@creacionCita');
-        cy.get('.appointmentConfirmSummary').should('be.visible')  
+        //Hay que encadenar esto para que el idCita llegue al test
+        return cy.wait('@creacionCita').then((interception)=> {
+            const idCita = interception.response.body.idCita;
+            return cy.get('.appointmentConfirmSummary').should('be.visible').then(()=> {return idCita}) 
+        });
     }
     irAMisCitas(){
         this.irAMisCitasBtn.click();
