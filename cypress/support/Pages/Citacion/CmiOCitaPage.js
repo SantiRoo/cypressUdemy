@@ -3,7 +3,7 @@ class CmiOCitaPage{
     get citaProgramadaBtn(){return '.appointmentWay-block button.link-block';}
 
     visit(){
-        cy.visit('https://rc.quironsalud.com/portal-paciente/es/nueva-cita')
+        cy.visit('https://uat.quironsalud.com/portal-paciente/es/nueva-cita')
     }
 
     accederCitaCmi(){

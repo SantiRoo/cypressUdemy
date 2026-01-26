@@ -8,11 +8,11 @@ class LoginPage{
     get emailInput(){return '#dvLogin';}
     get passwordInput(){return '#dvPass';}
     get resetPasswordBtn(){return '.reset-password-text a';}
-    get iniciarSesionBtn(){return '.form-login-box-boton.js-form-login-box-boton';}
+    get iniciarSesionBtn(){return '.form-login-box-boton';}
     get acceptCookiesBtn(){return '#onetrust-accept-btn-handler';}
 
     visit(){
-        cy.visit('https://rc.quironsalud.com/idcsalud-client/cm/portal-paciente/tkMain')
+        cy.visit('https://uat.quironsalud.com/idcsalud-client/cm/portal-paciente/tkMain')
     }
     acceptCookies(){
         cy.get(this.acceptCookiesBtn).click(); 

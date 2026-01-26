@@ -21,7 +21,7 @@ const loginPaciente = () => {
     LoginPage.visit();
     cy.wait(5000)
     //LoginPage.acceptCookies();
-    const email = 'santi@rc.es'
+    const email = 'sroo.ext@quironsalud.es'
     const password = 'Tester01'
     LoginPage.fillLoginForm(email, password);
     LoginPage.submitLoginForm();
@@ -31,7 +31,7 @@ const loginPaciente = () => {
 describe('Tests Cita Por Hospital', () => {
     beforeEach(()=>{
         cy.session('paciente logueado', loginPaciente);
-        cy.visit('https://rc.quironsalud.com/idcsalud-client/cm/portal-paciente/tkMain');
+        cy.visit('https://uat.quironsalud.com/idcsalud-client/cm/portal-paciente/tkMain');
     })
 
     afterEach(() =>{
@@ -97,13 +97,15 @@ describe('Tests Cita Por Hospital', () => {
     })
 
     it('Cita por hospital - Centro específico - Cita Privada - Presencial',() =>{
-        cy.visit('https://rc.quironsalud.com/idcsalud-client/cm/portal-paciente/tkMain')
-        cy.get('.listadoPatient li')
-        .first()
-        .click();
-        cy.get('#buttonContinuar').click();
+        //cy.visit('https://rc.quironsalud.com/idcsalud-client/cm/portal-paciente/tkMain')
+        //cy.get('.listadoPatient li')
+        //.first()
+        //.click();
+        //cy.get('#buttonContinuar').click();
+        SeleccionDePacientesPage.seleccionarPacienteTitular();        
         CmiOCitaPage.visit();
         HomePage.cerrarModalConfiar();
+        //HomePage.cerrarModalConfiar();
         CmiOCitaPage.accederCitaProgramada();
         CaminoCitaPage.accederCitaPorHospital();
         FormularioCitacionPage.accederProvincias();
@@ -111,6 +113,45 @@ describe('Tests Cita Por Hospital', () => {
         FormularioCitacionPage.accederHospitales();
         FromularioCitacionCentrosPage.expandirCentros();
         FromularioCitacionCentrosPage.seleccionarCentro('Centro Médico Quirónsalud A Coruña (Riazor)')
+        FormularioCitacionPage.accederEspecialidades();
+        FormularioCitacionEspecialidadesPage.seleccionarEspecialidad('Digestivo');
+        FormularioCitacionPage.confirmarFormulario();
+        PrimeraOSucesivaPage.seleccionarPrimeraCita();
+        PrestacionesPage.seleccionarPrestacion('Consulta Primera');
+        TipoCitaPage.seleccionarConsultaPresencial();
+        TipoCitaPage.clickEnSiguiente();
+        PrivadaOAseguradora.seleccionarCitaPrivada();
+        PrivadaOAseguradora.aceptarAbonarImporte();
+        cy.intercept('POST', '/idcsalud-client/cm/portal-paciente/pdp-api/v1/appointment/peticion/pending').as('llamadaPending');
+        cy.intercept('POST', '/idcsalud-client/cm/portal-paciente/pdp-api/v1/citas/huecos').as('llamadaHuecos');
+        PrivadaOAseguradora.clickVerFechas();
+        HuecosConHuecosPage.seleccionarYConfirmarHueco('@llamadaPending','@llamadaHuecos');
+        //Me guardo todos los datos de la cita creada
+        let fechaCitaCreada;
+        let hospitalCitaCreada;
+        HuecosConHuecosPage.getFechaYHoraCitaCreada().invoke('text').then(fechaEnHuecos => {
+            fechaCitaCreada = fechaEnHuecos.trim();
+        })
+        HuecosConHuecosPage.getHospitalCitaCreada().invoke('text').then(hospitalEnHuecos => {
+            hospitalCitaCreada = hospitalEnHuecos.trim();
+        })
+        //Voy a "Mis citas"
+        cy.intercept('POST', '/idcsalud-client/cm/portal-paciente/pdp-api/v1/citas/all').as('llamadaCitasAll');
+        HuecosConHuecosPage.irAMisCitas();
+        cy.wait('@llamadaCitasAll')
+
+        //Comparo los datos de la modal de cita confirmada con los datos en "Mis citas"
+        MisCitas.getFechaCita().invoke('text').then(fechaEnMisCitas => {
+            expect(fechaEnMisCitas.trim()).to.eq(fechaCitaCreada)
+        })
+        MisCitas.getCentro().invoke('text').then(hospitalEnMisCitas => {
+            expect(hospitalEnMisCitas.trim()).to.eq(hospitalCitaCreada)
+        })
+        cy.intercept('POST', '/idcsalud-client/cm/portal-paciente/pdp-api/v1/cancel/appointment?isNotificationAppointment=false').as('llamadaAnulacion')
+        MisCitas.anularCita();
+        cy.wait('@llamadaAnulacion').then((interception) => {
+            expect(interception.response.statusCode).to.eq(200);
+        })
     })
 
     it('Cita por hospital - Centro específico - Cita Privada - Telefónica', () => {
